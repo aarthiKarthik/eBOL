@@ -15,8 +15,11 @@
   const port = process.env.PORT || 3000;
   app.use(bodyParser.urlencoded({extended:false}));
   app.use(bodyParser.json());
-  app.use('/', express.static(__dirname + '/public'));
-
+//  app.use('/', express.static(__dirname + '/public'));
+  var options = {
+	index: './public/index.html'
+  };
+  app.use('/', express.static('/home/site/wwwroot', options));
 
 
   //MULTER CONFIG: to get file photos to temp server storage

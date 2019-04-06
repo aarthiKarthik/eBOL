@@ -73,7 +73,16 @@ fi
 
 echo Handling Basic Web Site deployment.
 
-# 1. KuduSync
+# 1. Install npm packages
+if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
+  cd "$DEPLOYMENT_SOURCE"
+  echo "Running npm install"
+  eval /usr/local/lib/node_modules/npm install
+  exitWithMessageOnError "npm failed"
+ cd - > /dev/null
+fi
+
+# 2. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
 
   if [[ "$IGNORE_MANIFEST" -eq "1" ]]; then

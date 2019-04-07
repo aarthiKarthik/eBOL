@@ -1,2 +1,2 @@
 [config]
-command = bash deploy.sh
+command = bash deploy.sh && node /home/site/wwwroot/file-upload-app/App.js

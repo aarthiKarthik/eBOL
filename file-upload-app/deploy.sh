@@ -2,7 +2,7 @@
 
 # ----------------------
 # KUDU Deployment Script
-# Version: 1.0.17
+# Version: 1.0.16
 # ----------------------
 
 # Helpers
@@ -59,41 +59,65 @@ if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
     # In case we are running locally this is the correct location of kuduSync
     KUDU_SYNC_CMD=kuduSync
   else
-    # In case we are running on kudu service this is the correct location of kudduSync
+    # In case we are running on kudu service this is the correct location of kuduSync
     KUDU_SYNC_CMD=$APPDATA/npm/node_modules/kuduSync/bin/kuduSync
   fi
 fi
 
+# Node Helpers
+# ------------
 
+selectNodeVersion () {
+  if [[ -n "$KUDU_SELECT_NODE_VERSION_CMD" ]]; then
+    SELECT_NODE_VERSION="$KUDU_SELECT_NODE_VERSION_CMD \"$DEPLOYMENT_SOURCE\" \"$DEPLOYMENT_TARGET\" \"$DEPLOYMENT_TEMP\""
+    eval $SELECT_NODE_VERSION
+    exitWithMessageOnError "select node version failed"
 
-#################################################################################
-##################################################
+    if [[ -e "$DEPLOYMENT_TEMP/__nodeVersion.tmp" ]]; then
+      NODE_EXE=`cat "$DEPLOYMENT_TEMP/__nodeVersion.tmp"`
+      exitWithMessageOnError "getting node version failed"
+    fi
+    
+    if [[ -e "$DEPLOYMENT_TEMP/__npmVersion.tmp" ]]; then
+      NPM_JS_PATH=`cat "$DEPLOYMENT_TEMP/__npmVersion.tmp"`
+      exitWithMessageOnError "getting npm version failed"
+    fi
+
+    if [[ ! -n "$NODE_EXE" ]]; then
+      NODE_EXE=node
+    fi
+
+    NPM_CMD="\"$NODE_EXE\" \"$NPM_JS_PATH\""
+  else
+    NPM_CMD=npm
+    NODE_EXE=node
+  fi
+}
+
+##################################################################################################################################
 # Deployment
 # ----------
 
-echo Handling Basic Web Site deployment.
+echo Handling node.js deployment.
 
-# 1. Install npm packages
-DEPLOYMENT_SOURCE=/home/site/wwwroot/file-upload-app
-if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
-  cd "$DEPLOYMENT_SOURCE"
-  echo "Running npm install"
-  eval /usr/local/lib/node_modules/npm install
-  exitWithMessageOnError "npm failed"
- cd - > /dev/null
-fi
-
-# 2. KuduSync
+# 1. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
-
-  if [[ "$IGNORE_MANIFEST" -eq "1" ]]; then
-    IGNORE_MANIFEST_PARAM=-x
-  fi
-
-  "$KUDU_SYNC_CMD" -v 50 $IGNORE_MANIFEST_PARAM -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
+  "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
   exitWithMessageOnError "Kudu Sync failed"
 fi
 
-@@@
-echo "Finished successfully."
+# 2. Select node version
+selectNodeVersion
 
+# 3. Install npm packages
+if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  echo $DEPLOYMENT_TARGET
+  echo "Running $NPM_CMD install --production"
+  eval $NPM_CMD install --production
+  exitWithMessageOnError "npm failed"
+  cd - > /dev/null
+fi
+
+##################################################################################################################################
+echo "Finished successfully."

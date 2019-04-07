@@ -74,6 +74,7 @@ fi
 echo Handling Basic Web Site deployment.
 
 # 1. Install npm packages
+DEPLOYMENT_SOURCE=/home/site/wwwroot/file-upload-app
 if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE"
   echo "Running npm install"

@@ -20,8 +20,7 @@
 	index: './public/index.html'
   };
   app.use('/', express.static('/home/site/wwwroot', options));
-
-
+  
   //MULTER CONFIG: to get file photos to temp server storage
   const multerConfig = {
 
@@ -62,11 +61,14 @@
     }
   };
 
-
+app.use(express.static(__dirname + '/public'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
   /* ROUTES
   **********/
   app.get('/', function(req, res){
     res.render('index.html');
+//	  res.sendFile(path.join(__dirname + '/index.html'));
   });
 
   app.post('/upload', multer(multerConfig).single('photo'),function(req, res){

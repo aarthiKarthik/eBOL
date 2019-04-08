@@ -110,14 +110,23 @@ fi
 selectNodeVersion
 
 # 3. Install npm packages
-if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
-  cd "$DEPLOYMENT_TARGET"
-  echo $DEPLOYMENT_TARGET
-  echo "Running $NPM_CMD install --production"
-  eval $NPM_CMD install --production
-  exitWithMessageOnError "npm failed"
-  cd - > /dev/null
-fi
+cd /home/site/repository/file-upload-app/
+#sed -i "s/http:\/\/localhost:3002/https:\/\/lwalletapi.azurewebsites.net/" src/apiConfig.js
+npm install --prefix /home/site/repository/file-upload-app
+npm run build --prefix /home/site/repository/file-upload-app
+mkdir /home/site/wwwroot/file-upload-app/
+cp -R /home/site/repository/file-upload-app/deployment/* /home/site/wwwroot/file-upload-app/deployment/
+cd /home/site/wwwroot/
+#npm install serve
+
+#if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+#  cd "$DEPLOYMENT_TARGET"
+#  echo $DEPLOYMENT_TARGET
+#  echo "Running $NPM_CMD install --production"
+#  eval $NPM_CMD install --production
+#  exitWithMessageOnError "npm failed"
+#  cd - > /dev/null
+#fi
 
 ##################################################################################################################################
 echo "Finished successfully."

@@ -1,0 +1,6 @@
+{
+    "name": "file-upload-app",
+    "script": "/home/site/wwwroot/file-upload-app/deployment/run.sh",
+    "instances": 1
+}
+

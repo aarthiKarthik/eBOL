@@ -7,8 +7,10 @@
 
   // RUN PACKAGES
   const express = require('express');
+  const fs = require('fs');
   const multer = require('multer');
   const bodyParser = require('body-parser');
+  var Tesseract = require('tesseract.js');
 
   // SETUP APP
   const app = express();
@@ -66,7 +68,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
   /* ROUTES
   **********/
-  app.get('/', function(req, res){
+  app.get('/', function(req, res){ 
     res.render('index.html');
 //	  res.sendFile(path.join(__dirname + '/index.html'));
   });
@@ -75,12 +77,43 @@ app.set('view engine', 'html');
       //Here is where I could add functions to then get the url of the new photo
       //And relocate that to a cloud storage solution with a callback containing its new url
       //then ideally loading that into your database solution.   Use case - user uploading an avatar...
+      console.log(res);
+      //jsonWrite();
+      Tesseract.recognize('maersk.jpg')
+        .progress(function  (p) { console.log('progress', p)  })
+        .catch(err => console.error(err))
+        .then(function (result) {
+          console.log(result.text)
+          process.exit(0)
+        });
       res.send('Complete! Check out your public/photo-storage folder.  Please note that files not encoded with an image mimetype are rejected. <a href="index.html">try again</a>');
-  }
-
-);
+  });
 
   // RUN SERVER
   app.listen(port,function(){
     console.log(`Server listening on port ${port}`);
   });
+
+
+
+function jsonWrite () {
+    // json data
+  var jsonData = '{"persons":[{"name":"John","city":"New York"},{"name":"Phil","city":"Ohio"}]}';
+  
+  // parse json
+  var jsonObj = JSON.parse(jsonData);
+  console.log(jsonObj);
+  
+  // stringify JSON Object
+  var jsonContent = JSON.stringify(jsonObj);
+  console.log(jsonContent);
+  filePath = './public/data' + '-' + Date.now() + '.txt';
+  fs.writeFile(filePath, jsonContent, 'utf8', function (err) {
+      if (err) {
+          console.log("An error occured while writing JSON Object to File.");
+          return console.log(err);
+      }
+  
+      console.log("JSON file has been saved.");
+  });
+}

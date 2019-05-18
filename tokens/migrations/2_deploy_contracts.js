@@ -1,5 +1,7 @@
 const BoL = artifacts.require("BoL");
 
-module.exports = function(deployer) {
-  deployer.deploy(BoL);
+module.exports = (deployer, network, accounts) => {
+  deployer.then(async () => {
+    const token = await deployer.deploy(BoL);
+  });
 };

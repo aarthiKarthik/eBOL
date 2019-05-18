@@ -9,6 +9,8 @@
   "author": "atkn",
   "license": "ISC",
   "dependencies": {
+    "truffle-contract": "^3.0.6",
+    "openzeppelin-solidity": "2.0",
     "truffle-hdwallet-provider": "^1.0.8"
   }
 }

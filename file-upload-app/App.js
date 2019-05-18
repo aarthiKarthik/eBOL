@@ -11,6 +11,7 @@
   const multer = require('multer');
   const bodyParser = require('body-parser');
   var Tesseract = require('tesseract.js');
+  const Dao = require('./dao/eth');
 
   // SETUP APP
   const app = express();
@@ -94,6 +95,10 @@ app.set('view engine', 'html');
     console.log(`Server listening on port ${port}`);
   });
 
+  app.post('/mint',  async function(req, res) {
+    console.log('in mint call');
+     await Dao.mintToken("SDP", "Buyer", 10);
+  });
 
 
 function jsonWrite () {

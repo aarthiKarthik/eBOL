@@ -4,10 +4,13 @@ pragma solidity ^0.4.24;
 
 
 import "./ownable.sol";
-import "./erc721.sol";
-import "./safemath.sol";
+//import "./erc721.sol";
+//import "./safemath.sol";
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+//import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract BoL is ERC721,Ownable {
+contract BoL is Ownable, ERC721 {
     
     using SafeMath for uint256;
     
@@ -23,18 +26,27 @@ contract BoL is ERC721,Ownable {
     uint256 private count = 0;
     
     BoLStruct public bol;
-    //mapping(uint => address) TajApproval;
 
+    constructor ()
+    ERC721() public {
+        owner = msg.sender;
+    }
+
+    /*constructor() ERC721() public {
+        owner = msg.sender;
+    }*/
 
     //only one BoL can be created, for now    
-    function mintToken() public onlyOwner{
-        require(count < 1);
+    function mintToken(string shipperName, string consignee, uint256 qty) public onlyOwner{
+        require(count < 1, "Cant create more");
+
         bol.nameId = "MAERSK BoL";
-        bol.sName = "SDP";
-        bol.consignee = "Kraft";
+        bol.sName = shipperName;
+        bol.consignee = consignee;
         bol.owner = msg.sender;
-        bol.qty = 3;
+        bol.qty = qty;
         count = count.add(1);
+        emit Mint(msg.sender,_to,_tokenId);
     }
     
     

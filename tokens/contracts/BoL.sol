@@ -46,7 +46,7 @@ contract BoL is Ownable, ERC721 {
         bol.owner = msg.sender;
         bol.qty = qty;
         count = count.add(1);
-        emit Mint(msg.sender,_to,_tokenId);
+        //emit Mint(msg.sender,_to,_tokenId);
     }
     
     

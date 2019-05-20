@@ -15,7 +15,7 @@ thisweb3.eth.getAccounts().then(addres => {
 });
 
 const EbolContract = contract(ebolABI);
-//console.log(ebolABI);
+console.log(ebolABI);
 EbolContract.setProvider(thisweb3.currentProvider);
 
 EbolContract.currentProvider.sendAsync = function () {

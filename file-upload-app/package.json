@@ -37,6 +37,6 @@
     "nodemon": "^1.12.1",
     "tesseract.js": "^1.0.19",
     "truffle-contract": "^3.0.6",
-    "web3": "^1.0.0-beta.33"
+    "web3": "^1.0.0-beta.37"
   }
 }
